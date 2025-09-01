@@ -20,10 +20,11 @@ class TaskManagerBot(commands.Bot):
     __version__ = "1.0.0"
 
     def __init__(self):
-        super().__init__(
-            command_prefix='12@@#21232!',  # Prefix is not used for slash commands but required - just keep this random so it cant accidentaly be invoked
-            intents=discord.Intents.all()
-        )
+        intents = discord.Intents.all()
+        intents.members = True  # Required for some role/user operations
+        super().__init__(command_prefix="!i@#@31@@!#", intents=intents)
+        self.version = self.__version__ # Set the instance version attribute
+
 
     async def setup_hook(self):
         """This is called once the bot is ready to start its setup."""
