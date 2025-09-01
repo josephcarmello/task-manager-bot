@@ -1,0 +1,7 @@
+{
+    "log_level": "INFO",
+    "author_name": "Bot Information",
+    "author_icon_url": "https://i.imgur.com/fKL31aD.jpg",
+    "footer_text": "Task Manager Bot - Information",
+    "color": "0x3498DB"
+}
