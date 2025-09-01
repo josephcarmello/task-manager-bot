@@ -22,7 +22,7 @@ class TaskManagerBot(commands.Bot):
     def __init__(self):
         super().__init__(
             command_prefix='12@@#21232!',  # Prefix is not used for slash commands but required - just keep this random so it cant accidentaly be invoked
-            intents=discord.Intents.default()
+            intents=discord.Intents.all()
         )
 
     async def setup_hook(self):
