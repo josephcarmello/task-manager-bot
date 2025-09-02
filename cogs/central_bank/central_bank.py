@@ -31,8 +31,10 @@ class CentralBank(commands.Cog):
         except (FileNotFoundError, json.JSONDecodeError) as e:
             logger.error(f"Failed to load config.json for CentralBank: {e}", exc_info=True)
             self.config = {
-                "author_name": "Central Bank", "author_icon_url": "",
-                "footer_text": "Task Manager Bot", "footer_icon_url": os.getenv("ICON_URL_FOOTER", ""),
+                "author_name": "Central Bank",
+                "author_icon_url": "",
+                "footer_text": "Task Manager Bot",
+                "footer_icon_url": os.getenv("ICON_URL_FOOTER", ""),
                 "color": "0x3498DB"
             }
 

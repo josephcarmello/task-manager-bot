@@ -4,7 +4,7 @@ import os
 import logging
 from dotenv import load_dotenv
 
-import database
+from database import core as db_core
 from logging_config import setup_logging
 
 load_dotenv()
@@ -59,7 +59,8 @@ if __name__ == "__main__":
     if not DISCORD_TOKEN:
         logger.critical("DISCORD_TOKEN environment variable not set. Please create a .env file.")
     else:
-        database.initialize_database()
+        # Initialize the shared/core database tables before the bot starts
+        db_core.initialize_database()
         bot = TaskManagerBot()
         bot.run(DISCORD_TOKEN)
 

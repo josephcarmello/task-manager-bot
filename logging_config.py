@@ -21,7 +21,7 @@ def setup_logging():
     handler = logging.StreamHandler(sys.stdout)
 
     formatter = logging.Formatter(
-        '[%(asctime)s] [%(name)-18s] [%(levelname)-7s] %(message)s',
+        '[%(asctime)s] [%(levelname)-7s] [%(name)-30s] %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S'
     )
     handler.setFormatter(formatter)

@@ -3,5 +3,6 @@
     "author_name": "Bot Statistics",
     "author_icon_url": "https://i.imgur.com/fKL31aD.jpg",
     "footer_text": "Task Manager Bot - Statistics",
-    "color": "0xE67E22"
+    "color": "0xE67E22",
+    "database_module": "cog_db_functions"
 }

@@ -3,5 +3,6 @@
     "author_name": "Cog Template",
     "author_icon_url": "https://i.imgur.com/fKL31aD.jpg",
     "footer_text": "Task Manager Bot - Cog Template",
-    "color": "0x95A5A6"
+    "color": "0x95A5A6",
+    "database_module": "cog_db_functions"
 }

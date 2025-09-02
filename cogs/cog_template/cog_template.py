@@ -4,14 +4,13 @@ from discord.ext import commands
 import os
 import logging
 import json
+import importlib
 from typing import Optional
 
-import database
-from roles_config import has_role
+import roles_config
 from logging_config import LOG_LEVELS
 
 # Get the logger for this specific cog
-# The logger is configured in the main bot file (main.py)
 logger = logging.getLogger(__name__)
 
 # Change the class name to reflect your cog's purpose
@@ -25,6 +24,7 @@ class CogTemplate(commands.Cog):
         self.bot = bot
         self._load_config()
         self._setup_logging()
+        self.db = self._load_db_module()
         # This message will be logged when the cog is loaded successfully
         logger.info(f"CogTemplate v{self.__version__} loaded.")
 
@@ -35,7 +35,7 @@ class CogTemplate(commands.Cog):
             with open(config_path, 'r') as f:
                 self.config = json.load(f)
             # Fallback for footer icon from environment variable if not in config
-            self.config['footer_icon_url'] = self.config.get('footer_icon_url', os.getenv("ICON_URL_FOOTer"))
+            self.config['footer_icon_url'] = self.config.get('footer_icon_url', os.getenv("ICON_URL_FOOTER"))
         except (FileNotFoundError, json.JSONDecodeError) as e:
             logger.error(f"Failed to load config.json for CogTemplate: {e}", exc_info=True)
             # Default config if the file is missing or invalid
@@ -44,12 +44,29 @@ class CogTemplate(commands.Cog):
                 "author_icon_url": "",
                 "footer_text": "Task Manager Bot",
                 "footer_icon_url": os.getenv("ICON_URL_FOOTER", ""),
-                "color": "0xCCCCCC" # Default grey color
+                "color": "0xCCCCCC", # Default grey color
+                "database_module": None
             }
+
+    def _load_db_module(self):
+        """Dynamically loads the cog's database functions module if specified in the config."""
+        db_module_name = self.config.get("database_module")
+        if db_module_name:
+            try:
+                # IMPORTANT: The module path must match the cog's folder name
+                module_path = f"cogs.cog_template.{db_module_name}"
+                db_module = importlib.import_module(module_path)
+                db_module.initialize_tables()
+                logger.info(f"Successfully loaded and initialized database module: {module_path}")
+                return db_module
+            except ImportError as e:
+                logger.error(f"Failed to load database module '{db_module_name}': {e}", exc_info=True)
+        else:
+            logger.debug("No database_module specified in config.json for CogTemplate.")
+        return None
 
     def _setup_logging(self):
         """Sets the log level for this cog's logger."""
-        # Check for a log level in the cog's config, otherwise fall back to the global setting
         log_level_str = self.config.get("log_level")
         source = "config.json"
         if not log_level_str:
@@ -78,30 +95,42 @@ class CogTemplate(commands.Cog):
             icon_url=self.config["author_icon_url"]
         )
         embed.set_footer(
-            text=self.config["footer_text"],
-            icon_url=self.config["footer_icon_url"]
+            text=self.config.get("footer_text", f"Task Manager Bot v{self.bot.version}"),
+            icon_url=self.config.get("footer_icon_url", "")
         )
         return embed
+
+    async def _handle_db_error(self, interaction: discord.Interaction):
+        """Sends a generic error message if the DB module isn't loaded."""
+        embed = self._create_embed("Command Error", "This command could not be processed because its database module is not configured correctly.")
+        if interaction.response.is_done():
+            await interaction.followup.send(embed=embed, ephemeral=True)
+        else:
+            await interaction.response.send_message(embed=embed, ephemeral=True)
 
     #### --- EXAMPLE COMMANDS --- ###
 
     @app_commands.command(name="template-command", description="An example command for the template.")
     async def template_command(self, interaction: discord.Interaction):
         """This is a sample slash command."""
-        # Always track command usage for statistics
-        database.track_command_usage('template-command')
-
         logger.info(f"'template-command' used by {interaction.user.name}")
+
+        # Example of how to use your cog-specific database functions
+        if self.db:
+            # e.g., self.db.save_my_data(interaction.user.id, "some data")
+            pass
+        else:
+            # Optionally, handle the case where DB isn't configured for this command
+            logger.debug("Database module not loaded for 'template-command', skipping DB operations.")
+
 
         embed = self._create_embed("Template Command", "This is an example command from a cog.")
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
     @app_commands.command(name="template-admin", description="[Admin Only] An example admin-only command.")
-    @has_role('admin') # This decorator restricts the command to users with the 'admin' role
+    @roles_config.has_role('admin') # This decorator restricts the command to users with the 'admin' role
     async def template_admin(self, interaction: discord.Interaction):
         """This is a sample admin-only slash command."""
-        database.track_command_usage('template-admin')
-
         logger.info(f"'template-admin' used by {interaction.user.name}")
 
         embed = self._create_embed("Admin Command", "You have the power!")
@@ -112,6 +141,4 @@ class CogTemplate(commands.Cog):
 async def setup(bot: commands.Bot):
     # Change 'CogTemplate' to the name of your class
     await bot.add_cog(CogTemplate(bot))
-
-
 

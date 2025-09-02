@@ -5,10 +5,10 @@ import os
 import platform
 import logging
 import json
+from typing import Optional
 
-import database
-from roles_config import has_role
 from logging_config import LOG_LEVELS
+import roles_config
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +23,7 @@ class Information(commands.Cog):
         logger.info(f"Information Cog v{self.__version__} loaded.")
 
     def _load_config(self):
+        """Loads configuration from a JSON file in the same directory."""
         config_path = os.path.join(os.path.dirname(__file__), 'config.json')
         try:
             with open(config_path, 'r') as f:
@@ -37,6 +38,7 @@ class Information(commands.Cog):
             }
 
     def _setup_logging(self):
+        """Sets the log level for this cog's logger."""
         log_level_str = self.config.get("log_level")
         source = "config.json"
         if not log_level_str:
@@ -49,18 +51,23 @@ class Information(commands.Cog):
 
     @property
     def embed_color(self) -> int:
+        """Returns the color for embeds as an integer."""
         return int(self.config.get('color', '0xCCCCCC'), 16)
 
     def _create_embed(self, title: str, description: str = "") -> discord.Embed:
+        """A helper function to create standardized embeds for this cog."""
         embed = discord.Embed(title=title, description=description, color=self.embed_color)
-        embed.set_author(name=self.config["author_name"], icon_url=self.config["author_icon_url"])
-        embed.set_footer(text=self.config["footer_text"], icon_url=self.config["footer_icon_url"])
+        embed.set_author(name=self.config["author_name"], icon_url=self.config.get("author_icon_url", ""))
+        embed.set_footer(
+            text=self.config.get("footer_text", f"Task Manager Bot v{self.bot.version}"),
+            icon_url=self.config.get("footer_icon_url", "")
+        )
         return embed
 
     @app_commands.command(name="info", description="Displays detailed information about the bot.")
     async def info(self, interaction: discord.Interaction):
         """Shows bot version, Python version, and loaded cogs."""
-        database.track_command_usage('info')
+        logger.info(f"'info' command used by {interaction.user.name}")
 
         embed = self._create_embed("Bot Information")
 
@@ -83,7 +90,7 @@ class Information(commands.Cog):
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
     @app_commands.command(name="shutdown", description="[Admin Only] Shuts down the bot.")
-    @has_role('admin')
+    @roles_config.has_role('admin')
     async def shutdown(self, interaction: discord.Interaction):
         """Shuts down the bot cleanly."""
         logger.warning(f"Shutdown command received from {interaction.user} (ID: {interaction.user.id})")
@@ -91,8 +98,8 @@ class Information(commands.Cog):
         await interaction.response.send_message(embed=embed, ephemeral=True)
         await self.bot.close()
 
+
 async def setup(bot: commands.Bot):
     await bot.add_cog(Information(bot))
-
 
 
