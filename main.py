@@ -37,9 +37,16 @@ class TaskManagerBot(commands.Bot):
         """Scans the cogs directory for subdirectories and loads cogs from them."""
         logger.info("--- Loading Cogs ---")
         cogs_dir = 'cogs'
+        # Cogs to exclude from loading
+        excluded_cogs = {'cog_template'}
+        
         for item in os.listdir(cogs_dir):
             path = os.path.join(cogs_dir, item)
             if os.path.isdir(path) and not item.startswith('__'):
+                if item in excluded_cogs:
+                    logger.info(f"Skipping excluded cog: {item}")
+                    continue
+                    
                 cog_name = item
                 cog_path = f'cogs.{cog_name}.{cog_name}'
                 try:
@@ -61,6 +68,11 @@ if __name__ == "__main__":
     else:
         # Initialize the shared/core database tables before the bot starts
         db_core.initialize_database()
+        
+        # Initialize currency tables (shared across cogs)
+        import database
+        database.initialize_currency_tables()
+        
         bot = TaskManagerBot()
         bot.run(DISCORD_TOKEN)
 
