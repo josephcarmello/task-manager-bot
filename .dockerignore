@@ -1,11 +1,9 @@
-# Docker ignore file - exclude from Docker build context
-
-# Git
+# git
 .git
 .gitignore
 .gitattributes
 
-# Python
+# python
 __pycache__/
 *.py[cod]
 *$py.class
@@ -15,18 +13,18 @@ __pycache__/
 dist/
 build/
 
-# Virtual environments
+# venvs
 .venv/
 venv/
 env/
 ENV/
 
-# Environment files
+# envs
 .env
 .env.*
 !env.example
 
-# Database
+# db
 *.db
 *.db-journal
 
@@ -46,21 +44,21 @@ ENV/
 # *.md
 # !README.md
 
-# Docker
+# docker
 docker-compose.override.yml
 Dockerfile.*
 .dockerignore
 
-# Logs
+# logs
 *.log
 logs/
 
-# Testing
+# testing
 .pytest_cache/
 .coverage
 htmlcov/
 
-# Temporary files
+# tmp
 *.tmp
 *.bak
 *.swp
