@@ -1,0 +1,54 @@
+# Task Manager Bot - Docker Compose Configuration
+
+services:
+  bot:
+    # Build from local Dockerfile
+    build:
+      context: .
+      dockerfile: Dockerfile
+    
+    # Container name
+    container_name: task-manager-bot
+    
+    # Restart policy
+    restart: unless-stopped
+    
+    # Environment variables from .env file
+    env_file:
+      - .env
+    
+    # Mount volumes for persistence
+    volumes:
+      # Database persistence
+      - ./task_manager.db:/app/task_manager.db
+      
+      # Optional: Mount code for live development (uncomment for hot reload)
+      # - ./cogs:/app/cogs:ro
+      # - ./database:/app/database:ro
+      # - ./main.py:/app/main.py:ro
+    
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    
+    # Network mode (optional)
+    # network_mode: bridge
+    
+    # Resource limits (optional, adjust as needed)
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '0.5'
+    #       memory: 512M
+    #     reservations:
+    #       cpus: '0.25'
+    #       memory: 256M
+
+# Optional: Define networks
+# networks:
+#   default:
+#     name: bot-network
+

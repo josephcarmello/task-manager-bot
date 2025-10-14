@@ -1,0 +1,65 @@
+# git
+.git
+.gitignore
+.gitattributes
+
+# python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# venvs
+.venv/
+venv/
+env/
+ENV/
+
+# envs
+.env
+.env.*
+!env.example
+
+# db
+*.db
+*.db-journal
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Documentation (optional, uncomment to exclude)
+# *.md
+# !README.md
+
+# docker
+docker-compose.override.yml
+Dockerfile.*
+.dockerignore
+
+# logs
+*.log
+logs/
+
+# testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# tmp
+*.tmp
+*.bak
+*.swp
+

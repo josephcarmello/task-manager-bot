@@ -35,25 +35,42 @@ class TaskManagerBot(commands.Bot):
 
     async def load_all_cogs(self):
         """Scans the cogs directory for subdirectories and loads cogs from them."""
-        logger.info("--- Loading Cogs ---")
+        logger.info("─" * 60)
+        logger.info("Loading Cogs")
+        logger.info("─" * 60)
+
         cogs_dir = 'cogs'
-        for item in os.listdir(cogs_dir):
+        excluded_cogs = {'cog_template'}
+
+        loaded_count = 0
+        for item in sorted(os.listdir(cogs_dir)):
             path = os.path.join(cogs_dir, item)
             if os.path.isdir(path) and not item.startswith('__'):
+                if item in excluded_cogs:
+                    logger.debug(f"⊘ Skipping: {item}")
+                    continue
+
                 cog_name = item
                 cog_path = f'cogs.{cog_name}.{cog_name}'
                 try:
                     await self.load_extension(cog_path)
-                    logger.info(f"Successfully loaded cog: {cog_name}")
+                    logger.info(f"✓ Loaded: {cog_name}")
+                    loaded_count += 1
                 except Exception as e:
-                    logger.error(f"Failed to load cog: {cog_name}", exc_info=e)
-        logger.info("--- Cogs Loaded ---")
+                    logger.error(f"✗ Failed: {cog_name}", exc_info=e)
+
+        logger.info("─" * 60)
+        logger.info(f"Loaded {loaded_count} cog(s) successfully")
+        logger.info("─" * 60)
 
     async def on_ready(self):
         """Called when the bot is fully connected and ready."""
-        logger.info(f'Logged in as {self.user} (ID: {self.user.id})')
-        logger.info(f'Bot Version: {self.__version__}')
-        logger.info('------')
+        logger.info("═" * 60)
+        logger.info(f'🤖 Bot Ready: {self.user}')
+        logger.info(f'📋 User ID: {self.user.id}')
+        logger.info(f'📦 Version: {self.__version__}')
+        logger.info(f'🌐 Servers: {len(self.guilds)}')
+        logger.info("═" * 60)
 
 if __name__ == "__main__":
     if not DISCORD_TOKEN:
@@ -61,7 +78,11 @@ if __name__ == "__main__":
     else:
         # Initialize the shared/core database tables before the bot starts
         db_core.initialize_database()
+
+        # Initialize currency tables (shared across cogs)
+        import database
+        database.initialize_currency_tables()
+
         bot = TaskManagerBot()
         bot.run(DISCORD_TOKEN)
-
 

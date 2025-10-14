@@ -1,0 +1,9 @@
+{
+    "author_name": "Fixtter",
+    "author_icon_url": "",
+    "color": "0x1DA1F2",
+    "footer_text": "Task Manager Bot",
+    "footer_icon_url": "",
+    "log_level": "INFO",
+    "database_module": null
+}

@@ -1,73 +1,42 @@
+"""
+Information Cog - Displays bot and system information.
+
+This is a REFACTORED version demonstrating the use of BaseCog.
+Compare this with information.py to see the code reduction!
+
+To use this version:
+1. Rename information.py to information_old.py
+2. Rename this file to information.py
+"""
+
 import discord
 from discord import app_commands
 from discord.ext import commands
-import os
 import platform
-import logging
-import json
-from typing import Optional
 
-from logging_config import LOG_LEVELS
+from cogs.base_cog import BaseCog
 import roles_config
 
-logger = logging.getLogger(__name__)
 
-class Information(commands.Cog):
+class Information(BaseCog):
     """A cog for displaying bot and system information."""
     __version__ = "1.0.0"
 
     def __init__(self, bot: commands.Bot):
-        self.bot = bot
-        self._load_config()
-        self._setup_logging()
-        logger.info(f"Information Cog v{self.__version__} loaded.")
-
-    def _load_config(self):
-        """Loads configuration from a JSON file in the same directory."""
-        config_path = os.path.join(os.path.dirname(__file__), 'config.json')
-        try:
-            with open(config_path, 'r') as f:
-                self.config = json.load(f)
-            self.config['footer_icon_url'] = self.config.get('footer_icon_url', os.getenv("ICON_URL_FOOTER"))
-        except (FileNotFoundError, json.JSONDecodeError) as e:
-            logger.error(f"Failed to load config.json for Information: {e}", exc_info=True)
-            self.config = {
-                "author_name": "Bot Information", "author_icon_url": "",
-                "footer_text": "Task Manager Bot", "footer_icon_url": os.getenv("ICON_URL_FOOTER", ""),
-                "color": "0x95A5A6"
-            }
-
-    def _setup_logging(self):
-        """Sets the log level for this cog's logger."""
-        log_level_str = self.config.get("log_level")
-        source = "config.json"
-        if not log_level_str:
-            log_level_str = os.getenv("LOG_LEVEL_COGS", "INFO")
-            source = "env/default"
-        log_level_str = log_level_str.upper()
-        log_level = LOG_LEVELS.get(log_level_str, logging.INFO)
-        logger.setLevel(log_level)
-        logger.debug(f"Information log level set to {log_level_str} (Source: {source})")
-
-    @property
-    def embed_color(self) -> int:
-        """Returns the color for embeds as an integer."""
-        return int(self.config.get('color', '0xCCCCCC'), 16)
-
-    def _create_embed(self, title: str, description: str = "") -> discord.Embed:
-        """A helper function to create standardized embeds for this cog."""
-        embed = discord.Embed(title=title, description=description, color=self.embed_color)
-        embed.set_author(name=self.config["author_name"], icon_url=self.config.get("author_icon_url", ""))
-        embed.set_footer(
-            text=self.config.get("footer_text", f"Task Manager Bot v{self.bot.version}"),
-            icon_url=self.config.get("footer_icon_url", "")
-        )
-        return embed
+        # That's it! All the boilerplate is handled by BaseCog
+        super().__init__(bot)
+    
+    def default_config(self) -> dict:
+        """Override default config with custom settings."""
+        config = super().default_config()
+        config["author_name"] = "Bot Information"
+        config["color"] = "0x95A5A6"
+        return config
 
     @app_commands.command(name="info", description="Displays detailed information about the bot.")
     async def info(self, interaction: discord.Interaction):
         """Shows bot version, Python version, and loaded cogs."""
-        logger.info(f"'info' command used by {interaction.user.name}")
+        self.logger.info(f"'info' command used by {interaction.user.name}")
 
         embed = self._create_embed("Bot Information")
 
@@ -93,7 +62,7 @@ class Information(commands.Cog):
     @roles_config.has_role('admin')
     async def shutdown(self, interaction: discord.Interaction):
         """Shuts down the bot cleanly."""
-        logger.warning(f"Shutdown command received from {interaction.user} (ID: {interaction.user.id})")
+        self.logger.warning(f"Shutdown command received from {interaction.user} (ID: {interaction.user.id})")
         embed = self._create_embed("Shutting Down", "The bot is now shutting down.")
         await interaction.response.send_message(embed=embed, ephemeral=True)
         await self.bot.close()
@@ -101,5 +70,4 @@ class Information(commands.Cog):
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Information(bot))
-
 
