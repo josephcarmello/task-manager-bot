@@ -343,27 +343,6 @@ DON'T ❌
 └─ Don't create mega-cogs with too many features
 ```
 
-## Performance Considerations
-
-```
-Initialization Time:
-├─ Config loading: < 1ms
-├─ Logging setup: < 1ms
-├─ DB module loading: < 10ms
-└─ Total: < 15ms per cog
-
-Memory Footprint:
-├─ BaseCog overhead: ~1KB per cog
-├─ Config dict: ~1-5KB
-├─ DB module: ~5-50KB (if used)
-└─ Total: Negligible
-
-Command Execution:
-├─ No overhead from BaseCog
-├─ Helper methods: < 1ms
-└─ Same speed as hand-coded cogs
-```
-
 ## Creating a New Cog
 
 ```bash
@@ -407,21 +386,3 @@ class MyCog(BaseCog):
 async def setup(bot: commands.Bot):
     await bot.add_cog(MyCog(bot))
 ```
-
-## Summary
-
-The BaseCog architecture provides:
-
-- **Centralization**: Common code in one place
-- **Consistency**: All cogs work the same way
-- **Extensibility**: Easy to add new features
-- **Maintainability**: Fix once, apply everywhere
-- **Developer Experience**: Fast cog development
-
-All while maintaining full flexibility and Discord.py compatibility! 🚀
-
----
-
-*See [BASE_COG_GUIDE.md](BASE_COG_GUIDE.md) for detailed usage*  
-*See [QUICK_REFERENCE.md](QUICK_REFERENCE.md) for quick lookup*  
-*See [DATABASE_ARCHITECTURE.md](DATABASE_ARCHITECTURE.md) for database usage*
