@@ -44,24 +44,6 @@ python3 main.py
 | **[QUICK_REFERENCE.md](docs/QUICK_REFERENCE.md)** | Developer cheat sheet |
 | **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** | System architecture |
 
-## Available Commands
-
-### General
-- `/info` - Display bot and system information
-- `/stats` - View command usage statistics
-
-### Currency System
-- `/balance <currency>` - Check your currency balance
-- `/pay <user> <amount> <currency>` - Transfer currency to another user
-- `/award <user> <amount> <currency>` - [Banker] Award currency to users
-
-### Admin
-- `/reset-stats` - [Admin] Reset all statistics
-- `/shutdown` - [Admin] Shut down the bot
-
-### Automatic Features
-- **Link Fixer** - Automatically converts Twitter/X links to vxtwitter for better embeds
-
 ## Requirements
 
 - **Python 3.11+** (3.13 recommended)
@@ -69,22 +51,6 @@ python3 main.py
 - **SQLite** (included with Python)
 
 Or use **Docker** (no Python installation needed)
-
-## Architecture
-
-```
-task-manager-bot/
-├── main.py                 # Bot entry point
-├── database/               # Shared database functions
-├── cogs/                   # Bot extensions
-│   ├── base_cog.py        # Base class for all cogs
-│   ├── information/       # Info commands
-│   ├── stats/             # Statistics tracking
-│   ├── central_bank/      # Currency system
-│   ├── fixtter/           # Link fixer
-│   └── cog_template/      # Template for new cogs
-└── Documentation/         # Guides and references
-```
 
 ## Creating a New Cog
 
@@ -190,38 +156,6 @@ success = database.transfer_currency(sender_id, receiver_id, amount, "tokens")
 
 See **[docs/DATABASE_ARCHITECTURE.md](docs/DATABASE_ARCHITECTURE.md)** for details.
 
-## Project Structure
-
-- **BaseCog System** - All cogs inherit from a base class for consistency
-- **Modular Design** - Each feature is a separate cog
-- **Shared Database** - Currency and stats accessible by all cogs
-- **Configuration-Driven** - Easy customization via JSON files
-- **Comprehensive Logging** - Per-cog logging with levels
-
-## Features in Detail
-
-### 🎯 Information Cog
-- Bot version and system info
-- Loaded cogs display
-- Admin shutdown command
-
-### 💰 Central Bank Cog
-- Multi-currency support
-- Balance checking
-- User-to-user transfers
-- Admin currency awards
-
-### 📊 Stats Cog
-- Automatic command tracking
-- Usage statistics display
-- Admin statistics reset
-
-### 🔗 Link Fixer Cog
-- Auto-fixes Twitter/X links
-- Preserves reply chains
-- Deletes original message
-- Tracks usage in stats
-
 ## Contributing
 
 1. Fork the repository
@@ -260,28 +194,4 @@ docker-compose up  # or python3 main.py
 ```
 
 See **[docs/DEVELOPMENT.MD](docs/DEVELOPMENT.MD)** for more troubleshooting.
-
-## License
-
-[Add your license here]
-
-## Support
-
-- **Documentation**: See files in `/docs/` directory
-- **Issues**: Create a GitHub issue
-- **Questions**: Check documentation first
-
-## Acknowledgments
-
-Built with:
-- [discord.py](https://github.com/Rapptz/discord.py) - Discord API wrapper
-- [python-dotenv](https://github.com/theskumar/python-dotenv) - Environment variable management
-
----
-
-**Ready to start?** → [docs/QUICKSTART.md](docs/QUICKSTART.md)
-
-**Need help?** → [docs/DEVELOPMENT.MD](docs/DEVELOPMENT.MD)
-
-**Using Docker?** → [docs/DOCKER.md](docs/DOCKER.md)
 
