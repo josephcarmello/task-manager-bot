@@ -13,17 +13,16 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Generate UUID image name
+      - name: Set image name
         id: image
         run: |
-          IMAGE_ID=$(uuidgen | tr '[:upper:]' '[:lower:]')
-          echo "image=test-build:${IMAGE_ID}" >> $GITHUB_OUTPUT
+          echo "image=test-build:${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> $GITHUB_OUTPUT
 
       - name: Build Docker image
         run: |
           docker build -t ${{ steps.image.outputs.image }} .
 
-      - name: Smoke run (optional)
+      - name: Smoke inspect
         run: |
           docker image inspect ${{ steps.image.outputs.image }}
 
