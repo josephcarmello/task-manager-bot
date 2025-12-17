@@ -27,12 +27,6 @@ jobs:
           echo "sha=${REGISTRY}/${IMAGE_NAME}:sha-${SHA_TAG}" >> $GITHUB_OUTPUT
           echo "latest=${REGISTRY}/${IMAGE_NAME}:latest" >> $GITHUB_OUTPUT
 
-      - name: Login to registry
-        run: |
-          docker login $REGISTRY \
-            -u "${{ secrets.REGISTRY_USERNAME }}" \
-            -p "${{ secrets.REGISTRY_PASSWORD }}"
-
       - name: Build image (multi-tag)
         run: |
           docker build \
