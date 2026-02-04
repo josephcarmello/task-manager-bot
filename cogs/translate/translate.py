@@ -107,14 +107,16 @@ class Translate(BaseCog):
     @app_commands.describe(
         text="The text you want to translate",
         to_language="The language to translate to",
-        from_language="The source language (leave empty for auto-detect)"
+        from_language="The source language (leave empty for auto-detect)",
+        private="If true, only you can see the translation (default: false)"
     )
     async def translate(
         self,
         interaction: discord.Interaction,
         text: str,
         to_language: str,
-        from_language: str = None
+        from_language: str = None,
+        private: bool = False
     ):
         """
         Translates text from one language to another.
@@ -123,6 +125,7 @@ class Translate(BaseCog):
             text: The text to translate
             to_language: The destination language code (e.g., 'en', 'es', 'ja', 'fr')
             from_language: Optional source language code. If not provided, auto-detection is used.
+            private: If True, the response will only be visible to you (ephemeral)
         """
         self.logger.info(f"'translate' command used by {interaction.user.name}")
 
@@ -177,7 +180,7 @@ class Translate(BaseCog):
                 inline=False
             )
 
-            await interaction.response.send_message(embed=embed)
+            await interaction.response.send_message(embed=embed, ephemeral=private)
 
         except Exception as e:
             self.logger.error(f"Translation error: {e}", exc_info=True)
