@@ -70,7 +70,7 @@ LANGUAGE_DISPLAY_NAMES = {
 
 class Translate(BaseCog):
     """A cog for translating text between languages."""
-    __version__ = "1.0.0"
+    __version__ = "1.0.1"
 
     def __init__(self, bot: commands.Bot):
         super().__init__(bot)
@@ -95,7 +95,7 @@ class Translate(BaseCog):
         """Autocomplete function for language selection."""
         if not current:
             return self.language_choices[:25]  # Discord limit is 25 choices- fun times.
-        
+
         current_lower = current.lower()
         filtered = [
             choice for choice in self.language_choices
@@ -120,7 +120,7 @@ class Translate(BaseCog):
     ):
         """
         Translates text from one language to another.
-        
+
         Args:
             text: The text to translate
             to_language: The destination language code (e.g., 'en', 'es', 'ja', 'fr')
@@ -210,7 +210,7 @@ class Translate(BaseCog):
         if not current:
             auto_choice = [app_commands.Choice(name="Auto-detect (auto)", value="auto")]
             return auto_choice + self.language_choices[:24]
-        
+
         current_lower = current.lower()
         if "auto" in current_lower:
             auto_choice = [app_commands.Choice(name="Auto-detect (auto)", value="auto")]
@@ -219,7 +219,7 @@ class Translate(BaseCog):
                 if current_lower in choice.name.lower() or current_lower in choice.value.lower()
             ]
             return (auto_choice + filtered)[:25]
-        
+
         filtered = [
             choice for choice in self.language_choices
             if current_lower in choice.name.lower() or current_lower in choice.value.lower()
